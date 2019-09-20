@@ -4,18 +4,30 @@
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>LOGIN - Proyecto de Cátedra - DAW</title>
+    <title>MAIN - Proyecto de Cátedra - DAW</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' media='screen' href='css/style.css'>
 </head>
 
 <body>
-    <div id="login_div" class="">
-        <h3>Por favor ingrese sus credenciales</h3>
-        <input type="email" placeholder="Correo..." id="correo" />
-        <input type="password" placeholder="Contraseña..." id="contra" />
-        <button onclick="login()">Ingresar</button>
+    <div id="user_div" class="">
+        <h3 id="user"></h3>
+        <button onclick="logout()">Salir</button>
     </div>
+
+    <div id="ejemplo_escribir">
+        <h3>Ejemplo de Ingreso de Datos</h3>
+        <input type="text" placeholder="Pregunta..." id="texto" />
+        <button onclick="guardar()">Guardar</button>
+    </div>
+    <div>
+        <h3>Datos Ingresados desde Base de Datos</h3>
+        <p id="mostrar"></p>
+    </div>
+    <div id="crear_quiz" class=""></div>
+    <div id="editar_quiz" class=""></div>
+    <div id="tomar_quiz" class=""></div>
+    <div id="ranking" class=""></div>
     <script src="https://www.gstatic.com/firebasejs/6.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-database.js"></script>
@@ -29,9 +41,15 @@
             messagingSenderId: "921803288888",
             appId: "1:921803288888:web:0d65d117f78d9ff71351cd"
         };
-        firebase.initializeApp(firebaseConfig);   
+        firebase.initializeApp(firebaseConfig);
+
+        var mostrar = document.getElementById('mostrar');
+        var basededatos = firebase.database().ref().child('EJEMPLO');
+        basededatos.on('value', snap => mostrar.innerText = snap.val());
+
     </script>
     <script src="js/index.js"></script>
+
 </body>
 
 </html>
