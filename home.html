@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>index</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/fonfo.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <!-- Brand -->
+    <a class="navbar-brand" href="#">Test de Historia</a>
+
+    <!-- Toggler/collapsibe Button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar links -->
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Prueba</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Resultados</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Registro</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+        <div class="card card-signin my-5">
+          <div class="card-body">
+              <div id="user_div" class="">
+                  <h5 class="card-title text-center" id="user"></h5>
+                  <button class="btn btn-lg btn-secondary btn-block text-uppercase"  onclick="logout()">Salir</button>
+                  <hr>
+              </div>
+          
+              <div id="ejemplo_escribir">
+                  <h5 class="card-title text-center">Guardar a Base de Datos</h5>
+                  <input type="text" class="form-control" placeholder="Ingresar..." id="texto" />
+                  <p></p>
+                  <button class="btn btn-lg btn-primary btn-block text-uppercase"  onclick="guardar()">Guardar</button>
+                  <hr>
+              </div>
+              <div>
+                  <h5 class="card-title text-center">Mostrando desde Firebase Realtime Database</h5>
+                  <p id="mostrar" class="card-title text-center"></p>
+                  <hr>
+              </div>
+            <h5 class="card-title text-center">Preguntas de Historia</h5>
+            <div id="quiz" class="test-main"></div>
+            <button class="btn btn-lg btn-primary btn-block text-uppercase"  id="submit">Submit Quiz</button>
+            <div id="results"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      function buildQuiz() {
+        // aqui almacenaremos el codigo html generado
+        const salida = [];
+
+        // foreach para cada pregunta
+        myQuestions.forEach((currentQuestion, questionNumber) => {
+          // guardando las respuestas
+          const answers = [];
+
+          // por cada respuesta
+          for (letter in currentQuestion.answers) {
+            // un boton radial
+            answers.push(
+              `<label>
+            <input type="radio" name="question${questionNumber}" value="${letter}">
+            ${letter} :
+            ${currentQuestion.answers[letter]}
+          </label><br>`
+            );
+          }
+
+          // añadir preguntas y respuestas a la salida
+          salida.push(
+            `<div class="question"> ${currentQuestion.question} </div>
+        <div class="answers"> ${answers.join("")} </div>`
+          );
+        });
+
+        // combinar salidas para montar el html
+        quizContainer.innerHTML = salida.join("");
+      }
+
+      function showResults() {
+        // recoge las respuestas seleccionadas
+        const answerContainers = quizContainer.querySelectorAll(".answers");
+
+        // conteo de preguntas correctas
+        let numCorrect = 0;
+
+        myQuestions.forEach((currentQuestion, questionNumber) => {
+          const answerContainer = answerContainers[questionNumber];
+          const selector = `input[name=question${questionNumber}]:checked`;
+          const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+
+          if (userAnswer === currentQuestion.correctAnswer) {
+            numCorrect++;
+
+            // colorear respuestas de verde
+            answerContainers[questionNumber].style.color = "#66CC00";
+          } else {
+            // si la pregunta no se responde o es incorrecta
+            // colorear el texto de rojo
+            answerContainers[questionNumber].style.color = "#FF0000";
+          }
+        });
+
+        // mostrar el numero de respuestas correctas
+        resultsContainer.innerHTML = `${numCorrect} correctas de ${myQuestions.length}`;
+      }
+
+      const quizContainer = document.getElementById("quiz");
+      const resultsContainer = document.getElementById("results");
+      const submitButton = document.getElementById("submit");
+      const myQuestions = [
+        {
+          question: "En que año Maximiliano Hernandez llego a la presidencia?",
+          answers: {
+            a: "1997",
+            b: "1932",
+            c: "1951"
+          },
+          correctAnswer: "b"
+        },
+        {
+          question: "Donde se firmaron los acuerdos de paz?",
+          answers: {
+            a: "Guatemala",
+            b: "Peru",
+            c: "Mexico"
+          },
+          correctAnswer: "c"
+        },
+        {
+          question: "Cuantos departamentos tiene El Salvador?",
+          answers: {
+            a: "8",
+            b: "21",
+            c: "15",
+            d: "14"
+          },
+          correctAnswer: "d"
+        }
+      ];
+
+      // imprimir el cuestionario
+      buildQuiz();
+
+      // al apretar boton mostrar resultados
+      submitButton.addEventListener("click", showResults);
+    })();
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/6.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-database.js"></script>
+  <script>
+      var firebaseConfig = {
+          apiKey: "AIzaSyCk__iW6SoAPrs9vdPeKyHsgn5ZKrOR_xQ",
+          authDomain: "daw-catedra.firebaseapp.com",
+          databaseURL: "https://daw-catedra.firebaseio.com",
+          projectId: "daw-catedra",
+          storageBucket: "",
+          messagingSenderId: "921803288888",
+          appId: "1:921803288888:web:0d65d117f78d9ff71351cd"
+      };
+      firebase.initializeApp(firebaseConfig);
+
+      var mostrar = document.getElementById('mostrar');
+      var basededatos = firebase.database().ref().child('EJEMPLO');
+      basededatos.on('value', snap => mostrar.innerText = snap.val());
+
+  </script>
+  <script src="js/index.js"></script>
+</body>
+
+</html>
