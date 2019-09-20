@@ -12,7 +12,7 @@ function login() {
   var userEmail = document.getElementById("correo").value;
   var userPass = document.getElementById("contra").value;
   firebase.auth().signInWithEmailAndPassword(userEmail, userPass).then(user => {
-    window.location = "main.html";
+    window.location = "home.html";
   }).catch(error => {
     var errorCode = error.code;
     var errorMessage = error.message;
